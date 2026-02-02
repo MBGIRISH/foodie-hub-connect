@@ -7,6 +7,9 @@ import Index from "./pages/Index";
 import Restaurants from "./pages/Restaurants";
 import RestaurantDetail from "./pages/RestaurantDetail";
 import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
+import OrderTracking from "./pages/OrderTracking";
+import Orders from "./pages/Orders";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
@@ -24,6 +27,9 @@ const App = () => (
           <Route path="/restaurants" element={<Restaurants />} />
           <Route path="/restaurant/:id" element={<RestaurantDetail />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/order/:id" element={<OrderTracking />} />
+          <Route path="/orders" element={<Orders />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="*" element={<NotFound />} />
