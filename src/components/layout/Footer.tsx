@@ -50,6 +50,11 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link to="/orders" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  My Orders
+                </Link>
+              </li>
+              <li>
                 <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
                   Partner with Us
                 </a>
