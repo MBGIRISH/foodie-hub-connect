@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingBag, User, Menu, X, MapPin, Search, LogOut } from 'lucide-react';
+import { ShoppingBag, User, Menu, X, MapPin, Search, LogOut, Package } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useCartStore } from '@/stores/cartStore';
@@ -111,6 +111,21 @@ export function Header() {
                 Restaurants
               </Button>
             </Link>
+
+            {user && (
+              <Link to="/orders">
+                <Button
+                  variant="ghost"
+                  className={`${
+                    isScrolled || !isHome
+                      ? 'text-foreground hover:text-primary'
+                      : 'text-white hover:text-white/80'
+                  }`}
+                >
+                  My Orders
+                </Button>
+              </Link>
+            )}
 
             <Link to="/cart">
               <Button
@@ -229,6 +244,14 @@ export function Header() {
 
                 {user ? (
                   <>
+                    <Link
+                      to="/orders"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-secondary transition-colors"
+                    >
+                      <Package className="w-5 h-5 text-primary" />
+                      <span className="font-medium">My Orders</span>
+                    </Link>
                     <Link
                       to="/profile"
                       onClick={() => setIsMenuOpen(false)}
