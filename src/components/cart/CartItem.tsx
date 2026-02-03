@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { Plus, Minus, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCartStore, CartItem as CartItemType } from '@/stores/cartStore';
+import { formatCurrency } from '@/lib/currency';
 
 interface CartItemProps {
   item: CartItemType;
@@ -33,7 +34,7 @@ export function CartItem({ item }: CartItemProps) {
       <div className="flex-1 min-w-0">
         <h3 className="font-semibold truncate">{item.name}</h3>
         <p className="text-lg font-semibold text-primary mt-1">
-          ${(item.price * item.quantity).toFixed(2)}
+          {formatCurrency(item.price * item.quantity)}
         </p>
 
         {/* Quantity controls */}

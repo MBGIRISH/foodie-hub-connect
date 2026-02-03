@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Star, Clock, MapPin, BadgeCheck } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { formatCurrency } from '@/lib/currency';
 import type { Restaurant } from '@/types';
 
 interface RestaurantCardProps {
@@ -66,7 +67,7 @@ export function RestaurantCard({ restaurant, index = 0 }: RestaurantCardProps) {
             <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
               <span>{restaurant.cuisine_type}</span>
               <span>•</span>
-              <span>${restaurant.min_order_amount} min order</span>
+              <span>{formatCurrency(restaurant.min_order_amount)} min order</span>
             </div>
 
             <div className="flex items-center gap-1 text-sm text-muted-foreground">
@@ -78,7 +79,7 @@ export function RestaurantCard({ restaurant, index = 0 }: RestaurantCardProps) {
             <div className="mt-3 pt-3 border-t border-border/50 flex justify-between items-center">
               <span className="text-sm text-muted-foreground">
                 {restaurant.delivery_fee > 0 
-                  ? `$${restaurant.delivery_fee.toFixed(2)} delivery` 
+                  ? `${formatCurrency(restaurant.delivery_fee)} delivery` 
                   : 'Free delivery'}
               </span>
               <span className="text-sm font-medium text-primary group-hover:underline">

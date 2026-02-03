@@ -90,15 +90,15 @@ export function Footer() {
             <ul className="space-y-3">
               <li className="flex items-center gap-3 text-sm text-muted-foreground">
                 <Mail className="w-4 h-4 text-primary" />
-                support@foodiehub.com
+                support@foodiehub.in
               </li>
               <li className="flex items-center gap-3 text-sm text-muted-foreground">
                 <Phone className="w-4 h-4 text-primary" />
-                +1 (555) 123-4567
+                +91 98765 43210
               </li>
               <li className="flex items-start gap-3 text-sm text-muted-foreground">
                 <MapPin className="w-4 h-4 text-primary mt-0.5" />
-                <span>123 Food Street, Culinary City, FC 12345</span>
+                <span>123 MG Road, Connaught Place, New Delhi 110001</span>
               </li>
             </ul>
           </div>

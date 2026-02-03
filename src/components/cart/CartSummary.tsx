@@ -3,6 +3,7 @@ import { ShoppingBag, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useCartStore } from '@/stores/cartStore';
+import { formatCurrency, DELIVERY_FEE, TAX_RATE } from '@/lib/currency';
 
 interface CartSummaryProps {
   showCheckout?: boolean;
@@ -11,8 +12,8 @@ interface CartSummaryProps {
 export function CartSummary({ showCheckout = true }: CartSummaryProps) {
   const { items, getTotal, restaurantName } = useCartStore();
   const subtotal = getTotal();
-  const deliveryFee = 2.99;
-  const tax = subtotal * 0.08;
+  const deliveryFee = DELIVERY_FEE;
+  const tax = subtotal * TAX_RATE;
   const total = subtotal + deliveryFee + tax;
 
   if (items.length === 0) {
@@ -51,19 +52,19 @@ export function CartSummary({ showCheckout = true }: CartSummaryProps) {
       <div className="space-y-3">
         <div className="flex justify-between text-sm">
           <span className="text-muted-foreground">Subtotal</span>
-          <span>${subtotal.toFixed(2)}</span>
+          <span>{formatCurrency(subtotal)}</span>
         </div>
         <div className="flex justify-between text-sm">
           <span className="text-muted-foreground">Delivery Fee</span>
-          <span>${deliveryFee.toFixed(2)}</span>
+          <span>{formatCurrency(deliveryFee)}</span>
         </div>
         <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">Tax</span>
-          <span>${tax.toFixed(2)}</span>
+          <span className="text-muted-foreground">GST (5%)</span>
+          <span>{formatCurrency(tax)}</span>
         </div>
         <div className="border-t border-border pt-3 flex justify-between font-semibold text-lg">
           <span>Total</span>
-          <span className="text-primary">${total.toFixed(2)}</span>
+          <span className="text-primary">{formatCurrency(total)}</span>
         </div>
       </div>
 

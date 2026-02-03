@@ -19,6 +19,7 @@ import { Progress } from '@/components/ui/progress';
 import { Layout } from '@/components/layout/Layout';
 import { DeliveryMap } from '@/components/maps/DeliveryMap';
 import { supabase } from '@/integrations/supabase/client';
+import { formatCurrency } from '@/lib/currency';
 import type { Order, OrderItem, Restaurant } from '@/types';
 
 const ORDER_STATUSES = [
@@ -342,36 +343,36 @@ export default function OrderTrackingPage() {
               >
                 <h3 className="font-display font-semibold text-lg mb-4">Order Summary</h3>
                 
-                {/* Items */}
-                <div className="space-y-3 mb-4 max-h-64 overflow-y-auto">
-                  {orderItems.map((item) => (
-                    <div key={item.id} className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">
-                        {item.quantity}x {item.name}
-                      </span>
-                      <span>${item.total_price.toFixed(2)}</span>
+                  {/* Items */}
+                  <div className="space-y-3 mb-4 max-h-64 overflow-y-auto">
+                    {orderItems.map((item) => (
+                      <div key={item.id} className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">
+                          {item.quantity}x {item.name}
+                        </span>
+                        <span>{formatCurrency(item.total_price)}</span>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <div className="border-t border-border pt-4 space-y-3">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Subtotal</span>
+                      <span>{formatCurrency(order.subtotal)}</span>
                     </div>
-                  ))}
-                </div>
-                
-                <div className="border-t border-border pt-4 space-y-3">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Subtotal</span>
-                    <span>${order.subtotal.toFixed(2)}</span>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Delivery Fee</span>
+                      <span>{formatCurrency(order.delivery_fee || 0)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">GST</span>
+                      <span>{formatCurrency(order.tax || 0)}</span>
+                    </div>
+                    <div className="border-t border-border pt-3 flex justify-between font-semibold text-lg">
+                      <span>Total</span>
+                      <span className="text-primary">{formatCurrency(order.total)}</span>
+                    </div>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Delivery Fee</span>
-                    <span>${(order.delivery_fee || 0).toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Tax</span>
-                    <span>${(order.tax || 0).toFixed(2)}</span>
-                  </div>
-                  <div className="border-t border-border pt-3 flex justify-between font-semibold text-lg">
-                    <span>Total</span>
-                    <span className="text-primary">${order.total.toFixed(2)}</span>
-                  </div>
-                </div>
 
                 <div className="mt-6 p-3 rounded-lg bg-success/10 flex items-center gap-2 text-sm text-success">
                   <CheckCircle className="w-4 h-4" />

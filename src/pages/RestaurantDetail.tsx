@@ -17,9 +17,10 @@ import { Layout } from '@/components/layout/Layout';
 import { MenuItemCard } from '@/components/menu/MenuItemCard';
 import { CartSummary } from '@/components/cart/CartSummary';
 import { useCartStore } from '@/stores/cartStore';
+import { formatCurrency } from '@/lib/currency';
 import type { Restaurant, MenuItem, MenuCategory } from '@/types';
 
-// Sample data
+// Sample data with Indian prices
 const SAMPLE_RESTAURANT: Restaurant = {
   id: '1',
   owner_id: '1',
@@ -27,14 +28,14 @@ const SAMPLE_RESTAURANT: Restaurant = {
   description: 'Experience the authentic flavors of India with our carefully crafted dishes. From creamy butter chicken to spicy vindaloo, every dish tells a story of tradition and passion.',
   cuisine_type: 'Indian',
   image_url: 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=1200&auto=format&fit=crop',
-  address: '123 Curry Lane, Food District, New York, NY 10001',
+  address: '123 MG Road, Connaught Place, New Delhi, 110001',
   latitude: null,
   longitude: null,
-  phone: '+1 (555) 123-4567',
+  phone: '+91 98765 43210',
   opening_time: '09:00',
   closing_time: '22:00',
-  min_order_amount: 15,
-  delivery_fee: 2.99,
+  min_order_amount: 199,
+  delivery_fee: 49,
   avg_delivery_time: 35,
   rating: 4.7,
   total_reviews: 324,
@@ -58,7 +59,7 @@ const SAMPLE_MENU_ITEMS: MenuItem[] = [
     category_id: '1',
     name: 'Samosas (2 pcs)',
     description: 'Crispy pastry filled with spiced potatoes and peas',
-    price: 6.99,
+    price: 89,
     image_url: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&auto=format&fit=crop',
     is_vegetarian: true,
     is_vegan: false,
@@ -74,7 +75,7 @@ const SAMPLE_MENU_ITEMS: MenuItem[] = [
     category_id: '1',
     name: 'Chicken Tikka',
     description: 'Marinated chicken pieces grilled to perfection',
-    price: 9.99,
+    price: 199,
     image_url: 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=400&auto=format&fit=crop',
     is_vegetarian: false,
     is_vegan: false,
@@ -90,7 +91,7 @@ const SAMPLE_MENU_ITEMS: MenuItem[] = [
     category_id: '2',
     name: 'Butter Chicken',
     description: 'Tender chicken in creamy tomato sauce with aromatic spices',
-    price: 16.99,
+    price: 349,
     image_url: 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=400&auto=format&fit=crop',
     is_vegetarian: false,
     is_vegan: false,
@@ -106,7 +107,7 @@ const SAMPLE_MENU_ITEMS: MenuItem[] = [
     category_id: '2',
     name: 'Lamb Rogan Josh',
     description: 'Slow-cooked lamb in rich Kashmiri spices',
-    price: 18.99,
+    price: 429,
     image_url: 'https://images.unsplash.com/photo-1545247181-516773cae754?w=400&auto=format&fit=crop',
     is_vegetarian: false,
     is_vegan: false,
@@ -122,7 +123,7 @@ const SAMPLE_MENU_ITEMS: MenuItem[] = [
     category_id: '2',
     name: 'Palak Paneer',
     description: 'Fresh cottage cheese cubes in creamy spinach sauce',
-    price: 14.99,
+    price: 279,
     image_url: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&auto=format&fit=crop',
     is_vegetarian: true,
     is_vegan: false,
@@ -138,7 +139,7 @@ const SAMPLE_MENU_ITEMS: MenuItem[] = [
     category_id: '2',
     name: 'Chicken Vindaloo',
     description: 'Fiery hot chicken curry with potatoes',
-    price: 15.99,
+    price: 319,
     image_url: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=400&auto=format&fit=crop',
     is_vegetarian: false,
     is_vegan: false,
@@ -154,7 +155,7 @@ const SAMPLE_MENU_ITEMS: MenuItem[] = [
     category_id: '3',
     name: 'Garlic Naan',
     description: 'Soft leavened bread topped with garlic and butter',
-    price: 3.99,
+    price: 59,
     image_url: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&auto=format&fit=crop',
     is_vegetarian: true,
     is_vegan: false,
@@ -170,7 +171,7 @@ const SAMPLE_MENU_ITEMS: MenuItem[] = [
     category_id: '4',
     name: 'Gulab Jamun',
     description: 'Sweet milk dumplings in rose-flavored syrup',
-    price: 5.99,
+    price: 99,
     image_url: 'https://images.unsplash.com/photo-1666190094617-d2e8dbdf1a09?w=400&auto=format&fit=crop',
     is_vegetarian: true,
     is_vegan: false,
@@ -271,11 +272,11 @@ export default function RestaurantDetail() {
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex flex-wrap items-center gap-4 text-sm">
               <span className="text-muted-foreground">
-                Min. order: <span className="font-medium text-foreground">${restaurant.min_order_amount}</span>
+                Min. order: <span className="font-medium text-foreground">{formatCurrency(restaurant.min_order_amount)}</span>
               </span>
               <span className="text-muted-foreground">
                 Delivery: <span className="font-medium text-foreground">
-                  {restaurant.delivery_fee > 0 ? `$${restaurant.delivery_fee}` : 'Free'}
+                  {restaurant.delivery_fee > 0 ? formatCurrency(restaurant.delivery_fee) : 'Free'}
                 </span>
               </span>
               <span className="text-muted-foreground flex items-center gap-1">
