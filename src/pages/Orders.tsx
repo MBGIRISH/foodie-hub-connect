@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Layout } from '@/components/layout/Layout';
 import { supabase } from '@/integrations/supabase/client';
+import { formatCurrency } from '@/lib/currency';
 import type { Order, Restaurant } from '@/types';
 
 export default function OrdersPage() {
@@ -88,7 +89,7 @@ export default function OrdersPage() {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString('en-IN', {
       month: 'short',
       day: 'numeric',
       year: 'numeric',
@@ -199,7 +200,7 @@ export default function OrdersPage() {
                     
                     <div className="flex items-center gap-4">
                       <div className="text-right">
-                        <p className="font-semibold text-lg">${order.total.toFixed(2)}</p>
+                        <p className="font-semibold text-lg">{formatCurrency(order.total)}</p>
                         <p className="text-xs text-muted-foreground">
                           Order #{order.id.slice(0, 8).toUpperCase()}
                         </p>

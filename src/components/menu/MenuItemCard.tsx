@@ -3,6 +3,7 @@ import { Plus, Minus, Leaf, Flame } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useCartStore } from '@/stores/cartStore';
+import { formatCurrency } from '@/lib/currency';
 import type { MenuItem } from '@/types';
 
 interface MenuItemCardProps {
@@ -76,7 +77,7 @@ export function MenuItemCard({ item, restaurantId, restaurantName }: MenuItemCar
         </div>
 
         <div className="flex items-center justify-between mt-3">
-          <span className="font-semibold text-lg">${item.price.toFixed(2)}</span>
+          <span className="font-semibold text-lg">{formatCurrency(item.price)}</span>
 
           {/* Add/Quantity controls */}
           {quantity === 0 ? (

@@ -19,6 +19,7 @@ import { Layout } from '@/components/layout/Layout';
 import { useCartStore } from '@/stores/cartStore';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { formatCurrency, DELIVERY_FEE, TAX_RATE, isValidIndianPhone } from '@/lib/currency';
 import type { User } from '@supabase/supabase-js';
 
 export default function CheckoutPage() {
@@ -36,8 +37,8 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState('cash_on_delivery');
 
   const subtotal = getTotal();
-  const deliveryFee = 2.99;
-  const tax = subtotal * 0.08;
+  const deliveryFee = DELIVERY_FEE;
+  const tax = subtotal * TAX_RATE;
   const total = subtotal + deliveryFee + tax;
 
   useEffect(() => {
@@ -122,6 +123,11 @@ export default function CheckoutPage() {
 
     if (!phone.trim()) {
       toast.error('Please enter a phone number');
+      return;
+    }
+
+    if (!isValidIndianPhone(phone)) {
+      toast.error('Please enter a valid 10-digit Indian mobile number');
       return;
     }
 
@@ -288,8 +294,9 @@ export default function CheckoutPage() {
                         type="tel"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
-                        placeholder="+1 (555) 123-4567"
+                        placeholder="+91 98765 43210"
                         required
+                        maxLength={15}
                         className="mt-1.5"
                       />
                     </div>
@@ -365,7 +372,7 @@ export default function CheckoutPage() {
                         <span className="text-muted-foreground">
                           {item.quantity}x {item.name}
                         </span>
-                        <span>${(item.price * item.quantity).toFixed(2)}</span>
+                        <span>{formatCurrency(item.price * item.quantity)}</span>
                       </div>
                     ))}
                   </div>
@@ -373,19 +380,19 @@ export default function CheckoutPage() {
                   <div className="border-t border-border pt-4 space-y-3">
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Subtotal</span>
-                      <span>${subtotal.toFixed(2)}</span>
+                      <span>{formatCurrency(subtotal)}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Delivery Fee</span>
-                      <span>${deliveryFee.toFixed(2)}</span>
+                      <span>{formatCurrency(deliveryFee)}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Tax</span>
-                      <span>${tax.toFixed(2)}</span>
+                      <span className="text-muted-foreground">GST (5%)</span>
+                      <span>{formatCurrency(tax)}</span>
                     </div>
                     <div className="border-t border-border pt-3 flex justify-between font-semibold text-lg">
                       <span>Total</span>
-                      <span className="text-primary">${total.toFixed(2)}</span>
+                      <span className="text-primary">{formatCurrency(total)}</span>
                     </div>
                   </div>
 
@@ -404,7 +411,7 @@ export default function CheckoutPage() {
                     ) : (
                       <>
                         <CheckCircle className="w-5 h-5" />
-                        Place Order - ${total.toFixed(2)}
+                        Place Order - {formatCurrency(total)}
                       </>
                     )}
                   </Button>
