@@ -137,6 +137,12 @@ export default function CheckoutPage() {
       return;
     }
 
+    if (!restaurantId) {
+      toast.error('Invalid restaurant. Please add items from a restaurant again.');
+      navigate('/restaurants');
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
