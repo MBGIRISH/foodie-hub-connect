@@ -18,183 +18,85 @@ import { MenuItemCard } from '@/components/menu/MenuItemCard';
 import { CartSummary } from '@/components/cart/CartSummary';
 import { useCartStore } from '@/stores/cartStore';
 import { formatCurrency } from '@/lib/currency';
+import { supabase } from '@/integrations/supabase/client';
 import type { Restaurant, MenuItem, MenuCategory } from '@/types';
-
-// Sample data with Indian prices
-const SAMPLE_RESTAURANT: Restaurant = {
-  id: '1',
-  owner_id: '1',
-  name: 'Spice Garden',
-  description: 'Experience the authentic flavors of India with our carefully crafted dishes. From creamy butter chicken to spicy vindaloo, every dish tells a story of tradition and passion.',
-  cuisine_type: 'Indian',
-  image_url: 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=1200&auto=format&fit=crop',
-  address: '123 MG Road, Connaught Place, New Delhi, 110001',
-  latitude: null,
-  longitude: null,
-  phone: '+91 98765 43210',
-  opening_time: '09:00',
-  closing_time: '22:00',
-  min_order_amount: 199,
-  delivery_fee: 49,
-  avg_delivery_time: 35,
-  rating: 4.7,
-  total_reviews: 324,
-  is_active: true,
-  is_verified: true,
-  created_at: new Date().toISOString(),
-  updated_at: new Date().toISOString(),
-};
-
-const SAMPLE_CATEGORIES: MenuCategory[] = [
-  { id: '1', restaurant_id: '1', name: 'Appetizers', description: 'Start your meal right', sort_order: 1, created_at: new Date().toISOString() },
-  { id: '2', restaurant_id: '1', name: 'Main Course', description: 'Hearty main dishes', sort_order: 2, created_at: new Date().toISOString() },
-  { id: '3', restaurant_id: '1', name: 'Breads', description: 'Fresh baked breads', sort_order: 3, created_at: new Date().toISOString() },
-  { id: '4', restaurant_id: '1', name: 'Desserts', description: 'Sweet endings', sort_order: 4, created_at: new Date().toISOString() },
-];
-
-const SAMPLE_MENU_ITEMS: MenuItem[] = [
-  {
-    id: '1',
-    restaurant_id: '1',
-    category_id: '1',
-    name: 'Samosas (2 pcs)',
-    description: 'Crispy pastry filled with spiced potatoes and peas',
-    price: 89,
-    image_url: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&auto=format&fit=crop',
-    is_vegetarian: true,
-    is_vegan: false,
-    is_spicy: false,
-    is_available: true,
-    prep_time: 10,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: '2',
-    restaurant_id: '1',
-    category_id: '1',
-    name: 'Chicken Tikka',
-    description: 'Marinated chicken pieces grilled to perfection',
-    price: 199,
-    image_url: 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=400&auto=format&fit=crop',
-    is_vegetarian: false,
-    is_vegan: false,
-    is_spicy: true,
-    is_available: true,
-    prep_time: 15,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: '3',
-    restaurant_id: '1',
-    category_id: '2',
-    name: 'Butter Chicken',
-    description: 'Tender chicken in creamy tomato sauce with aromatic spices',
-    price: 349,
-    image_url: 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=400&auto=format&fit=crop',
-    is_vegetarian: false,
-    is_vegan: false,
-    is_spicy: false,
-    is_available: true,
-    prep_time: 20,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: '4',
-    restaurant_id: '1',
-    category_id: '2',
-    name: 'Lamb Rogan Josh',
-    description: 'Slow-cooked lamb in rich Kashmiri spices',
-    price: 429,
-    image_url: 'https://images.unsplash.com/photo-1545247181-516773cae754?w=400&auto=format&fit=crop',
-    is_vegetarian: false,
-    is_vegan: false,
-    is_spicy: true,
-    is_available: true,
-    prep_time: 25,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: '5',
-    restaurant_id: '1',
-    category_id: '2',
-    name: 'Palak Paneer',
-    description: 'Fresh cottage cheese cubes in creamy spinach sauce',
-    price: 279,
-    image_url: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&auto=format&fit=crop',
-    is_vegetarian: true,
-    is_vegan: false,
-    is_spicy: false,
-    is_available: true,
-    prep_time: 15,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: '6',
-    restaurant_id: '1',
-    category_id: '2',
-    name: 'Chicken Vindaloo',
-    description: 'Fiery hot chicken curry with potatoes',
-    price: 319,
-    image_url: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=400&auto=format&fit=crop',
-    is_vegetarian: false,
-    is_vegan: false,
-    is_spicy: true,
-    is_available: true,
-    prep_time: 20,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: '7',
-    restaurant_id: '1',
-    category_id: '3',
-    name: 'Garlic Naan',
-    description: 'Soft leavened bread topped with garlic and butter',
-    price: 59,
-    image_url: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&auto=format&fit=crop',
-    is_vegetarian: true,
-    is_vegan: false,
-    is_spicy: false,
-    is_available: true,
-    prep_time: 8,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: '8',
-    restaurant_id: '1',
-    category_id: '4',
-    name: 'Gulab Jamun',
-    description: 'Sweet milk dumplings in rose-flavored syrup',
-    price: 99,
-    image_url: 'https://images.unsplash.com/photo-1666190094617-d2e8dbdf1a09?w=400&auto=format&fit=crop',
-    is_vegetarian: true,
-    is_vegan: false,
-    is_spicy: false,
-    is_available: true,
-    prep_time: 5,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-];
 
 export default function RestaurantDetail() {
   const { id } = useParams();
-  const [restaurant, setRestaurant] = useState<Restaurant | null>(SAMPLE_RESTAURANT);
-  const [categories, setCategories] = useState<MenuCategory[]>(SAMPLE_CATEGORIES);
-  const [menuItems, setMenuItems] = useState<MenuItem[]>(SAMPLE_MENU_ITEMS);
-  const [activeCategory, setActiveCategory] = useState(SAMPLE_CATEGORIES[0]?.id || '');
-  const [isLoading, setIsLoading] = useState(false);
+  const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
+  const [categories, setCategories] = useState<MenuCategory[]>([]);
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [activeCategory, setActiveCategory] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
   const itemCount = useCartStore((state) => state.getItemCount());
+
+  useEffect(() => {
+    if (id) {
+      fetchRestaurantData();
+    }
+  }, [id]);
+
+  const fetchRestaurantData = async () => {
+    if (!id) return;
+    
+    setIsLoading(true);
+    try {
+      // Fetch restaurant
+      const { data: restaurantData, error: restaurantError } = await supabase
+        .from('restaurants')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (restaurantError) throw restaurantError;
+      setRestaurant(restaurantData as Restaurant);
+
+      // Fetch categories
+      const { data: categoriesData, error: categoriesError } = await supabase
+        .from('menu_categories')
+        .select('*')
+        .eq('restaurant_id', id)
+        .order('sort_order');
+
+      if (categoriesError) throw categoriesError;
+      setCategories(categoriesData as MenuCategory[]);
+      if (categoriesData.length > 0) {
+        setActiveCategory(categoriesData[0].id);
+      }
+
+      // Fetch menu items
+      const { data: menuData, error: menuError } = await supabase
+        .from('menu_items')
+        .select('*')
+        .eq('restaurant_id', id)
+        .eq('is_available', true);
+
+      if (menuError) throw menuError;
+      setMenuItems(menuData as MenuItem[]);
+    } catch (error) {
+      console.error('Error fetching restaurant:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const getItemsByCategory = (categoryId: string) => {
     return menuItems.filter((item) => item.category_id === categoryId);
   };
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="pt-24 pb-16 container mx-auto px-4">
+          <div className="animate-pulse space-y-4">
+            <div className="h-64 bg-secondary rounded-2xl" />
+            <div className="h-8 w-48 bg-secondary rounded" />
+            <div className="h-48 bg-secondary rounded-2xl" />
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   if (!restaurant) {
     return (

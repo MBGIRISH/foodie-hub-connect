@@ -17,202 +17,36 @@ import { CuisineFilter } from '@/components/restaurants/CuisineFilter';
 import { supabase } from '@/integrations/supabase/client';
 import type { Restaurant } from '@/types';
 
-// Sample data for demo
-const SAMPLE_RESTAURANTS: Restaurant[] = [
-  {
-    id: '1',
-    owner_id: '1',
-    name: 'Spice Garden',
-    description: 'Authentic Indian cuisine with a modern twist',
-    cuisine_type: 'Indian',
-    image_url: 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=800&auto=format&fit=crop',
-    address: '123 Curry Lane, Food District',
-    latitude: null,
-    longitude: null,
-    phone: '+1234567890',
-    opening_time: '09:00',
-    closing_time: '22:00',
-    min_order_amount: 15,
-    delivery_fee: 2.99,
-    avg_delivery_time: 35,
-    rating: 4.7,
-    total_reviews: 324,
-    is_active: true,
-    is_verified: true,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: '2',
-    owner_id: '2',
-    name: 'Dragon Wok',
-    description: 'Traditional Chinese flavors',
-    cuisine_type: 'Chinese',
-    image_url: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=800&auto=format&fit=crop',
-    address: '456 Noodle Street',
-    latitude: null,
-    longitude: null,
-    phone: '+1234567891',
-    opening_time: '10:00',
-    closing_time: '23:00',
-    min_order_amount: 12,
-    delivery_fee: 0,
-    avg_delivery_time: 25,
-    rating: 4.5,
-    total_reviews: 256,
-    is_active: true,
-    is_verified: true,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: '3',
-    owner_id: '3',
-    name: 'Bella Italia',
-    description: 'Authentic Italian pasta and pizza',
-    cuisine_type: 'Italian',
-    image_url: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&auto=format&fit=crop',
-    address: '789 Pizza Avenue',
-    latitude: null,
-    longitude: null,
-    phone: '+1234567892',
-    opening_time: '11:00',
-    closing_time: '22:00',
-    min_order_amount: 20,
-    delivery_fee: 3.49,
-    avg_delivery_time: 40,
-    rating: 4.8,
-    total_reviews: 512,
-    is_active: true,
-    is_verified: false,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: '4',
-    owner_id: '4',
-    name: 'Taco Fiesta',
-    description: 'Fresh Mexican street food',
-    cuisine_type: 'Mexican',
-    image_url: 'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=800&auto=format&fit=crop',
-    address: '321 Salsa Boulevard',
-    latitude: null,
-    longitude: null,
-    phone: '+1234567893',
-    opening_time: '09:00',
-    closing_time: '21:00',
-    min_order_amount: 10,
-    delivery_fee: 1.99,
-    avg_delivery_time: 20,
-    rating: 4.6,
-    total_reviews: 189,
-    is_active: true,
-    is_verified: true,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: '5',
-    owner_id: '5',
-    name: 'Sushi Master',
-    description: 'Fresh sushi and Japanese delicacies',
-    cuisine_type: 'Japanese',
-    image_url: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800&auto=format&fit=crop',
-    address: '567 Sakura Street',
-    latitude: null,
-    longitude: null,
-    phone: '+1234567894',
-    opening_time: '11:00',
-    closing_time: '22:00',
-    min_order_amount: 25,
-    delivery_fee: 4.99,
-    avg_delivery_time: 45,
-    rating: 4.9,
-    total_reviews: 678,
-    is_active: true,
-    is_verified: true,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: '6',
-    owner_id: '6',
-    name: 'Thai Orchid',
-    description: 'Authentic Thai street food',
-    cuisine_type: 'Thai',
-    image_url: 'https://images.unsplash.com/photo-1562565652-a0d8f0c59eb4?w=800&auto=format&fit=crop',
-    address: '890 Bangkok Lane',
-    latitude: null,
-    longitude: null,
-    phone: '+1234567895',
-    opening_time: '10:00',
-    closing_time: '22:00',
-    min_order_amount: 15,
-    delivery_fee: 2.49,
-    avg_delivery_time: 30,
-    rating: 4.4,
-    total_reviews: 145,
-    is_active: true,
-    is_verified: false,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: '7',
-    owner_id: '7',
-    name: 'Burger Joint',
-    description: 'Gourmet burgers and fries',
-    cuisine_type: 'American',
-    image_url: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800&auto=format&fit=crop',
-    address: '234 Main Street',
-    latitude: null,
-    longitude: null,
-    phone: '+1234567896',
-    opening_time: '11:00',
-    closing_time: '23:00',
-    min_order_amount: 12,
-    delivery_fee: 1.99,
-    avg_delivery_time: 25,
-    rating: 4.3,
-    total_reviews: 234,
-    is_active: true,
-    is_verified: true,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: '8',
-    owner_id: '8',
-    name: 'Mediterranean Grill',
-    description: 'Fresh Mediterranean cuisine',
-    cuisine_type: 'Mediterranean',
-    image_url: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=800&auto=format&fit=crop',
-    address: '456 Olive Street',
-    latitude: null,
-    longitude: null,
-    phone: '+1234567897',
-    opening_time: '10:00',
-    closing_time: '21:00',
-    min_order_amount: 18,
-    delivery_fee: 2.99,
-    avg_delivery_time: 35,
-    rating: 4.6,
-    total_reviews: 167,
-    is_active: true,
-    is_verified: true,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-];
-
 export default function RestaurantsPage() {
   const [searchParams] = useSearchParams();
-  const [restaurants, setRestaurants] = useState<Restaurant[]>(SAMPLE_RESTAURANTS);
-  const [filteredRestaurants, setFilteredRestaurants] = useState<Restaurant[]>(SAMPLE_RESTAURANTS);
+  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
+  const [filteredRestaurants, setFilteredRestaurants] = useState<Restaurant[]>([]);
   const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
   const [selectedCuisine, setSelectedCuisine] = useState('all');
   const [sortBy, setSortBy] = useState('rating');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch restaurants from database
+  useEffect(() => {
+    fetchRestaurants();
+  }, []);
+
+  const fetchRestaurants = async () => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('restaurants')
+        .select('*')
+        .eq('is_active', true);
+
+      if (error) throw error;
+      setRestaurants(data as Restaurant[]);
+    } catch (error) {
+      console.error('Error fetching restaurants:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Filter and sort restaurants
   useEffect(() => {

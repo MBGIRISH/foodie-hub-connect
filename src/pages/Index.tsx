@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight, MapPin, Clock, Star, Truck, Shield, Utensils } from 'lucide-react';
@@ -7,103 +7,9 @@ import { Input } from '@/components/ui/input';
 import { Layout } from '@/components/layout/Layout';
 import { RestaurantCard } from '@/components/restaurants/RestaurantCard';
 import { CuisineFilter } from '@/components/restaurants/CuisineFilter';
+import { supabase } from '@/integrations/supabase/client';
 import { CUISINE_FILTERS } from '@/types';
-
-// Sample featured restaurants for demo with Indian prices
-const FEATURED_RESTAURANTS = [
-  {
-    id: '1',
-    owner_id: '1',
-    name: 'Spice Garden',
-    description: 'Authentic Indian cuisine with a modern twist',
-    cuisine_type: 'Indian',
-    image_url: 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=800&auto=format&fit=crop',
-    address: '123 MG Road, Connaught Place, Delhi',
-    latitude: null,
-    longitude: null,
-    phone: '+91 98765 43210',
-    opening_time: '09:00',
-    closing_time: '22:00',
-    min_order_amount: 199,
-    delivery_fee: 49,
-    avg_delivery_time: 35,
-    rating: 4.7,
-    total_reviews: 324,
-    is_active: true,
-    is_verified: true,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: '2',
-    owner_id: '2',
-    name: 'Dragon Wok',
-    description: 'Traditional Chinese flavors',
-    cuisine_type: 'Chinese',
-    image_url: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=800&auto=format&fit=crop',
-    address: '456 Brigade Road, Bangalore',
-    latitude: null,
-    longitude: null,
-    phone: '+91 87654 32109',
-    opening_time: '10:00',
-    closing_time: '23:00',
-    min_order_amount: 149,
-    delivery_fee: 0,
-    avg_delivery_time: 25,
-    rating: 4.5,
-    total_reviews: 256,
-    is_active: true,
-    is_verified: true,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: '3',
-    owner_id: '3',
-    name: 'Bella Italia',
-    description: 'Authentic Italian pasta and pizza',
-    cuisine_type: 'Italian',
-    image_url: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&auto=format&fit=crop',
-    address: '789 Juhu Beach Road, Mumbai',
-    latitude: null,
-    longitude: null,
-    phone: '+91 76543 21098',
-    opening_time: '11:00',
-    closing_time: '22:00',
-    min_order_amount: 299,
-    delivery_fee: 59,
-    avg_delivery_time: 40,
-    rating: 4.8,
-    total_reviews: 512,
-    is_active: true,
-    is_verified: false,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: '4',
-    owner_id: '4',
-    name: 'Taco Fiesta',
-    description: 'Fresh Mexican street food',
-    cuisine_type: 'Mexican',
-    image_url: 'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=800&auto=format&fit=crop',
-    address: '321 Park Street, Kolkata',
-    latitude: null,
-    longitude: null,
-    phone: '+91 65432 10987',
-    opening_time: '09:00',
-    closing_time: '21:00',
-    min_order_amount: 129,
-    delivery_fee: 29,
-    avg_delivery_time: 20,
-    rating: 4.6,
-    total_reviews: 189,
-    is_active: true,
-    is_verified: true,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-];
+import type { Restaurant } from '@/types';
 
 const FEATURES = [
   {
@@ -126,10 +32,34 @@ const FEATURES = [
 export default function Index() {
   const [selectedCuisine, setSelectedCuisine] = useState('all');
   const [address, setAddress] = useState('');
+  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchRestaurants();
+  }, []);
+
+  const fetchRestaurants = async () => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('restaurants')
+        .select('*')
+        .eq('is_active', true)
+        .limit(4);
+
+      if (error) throw error;
+      setRestaurants(data as Restaurant[]);
+    } catch (error) {
+      console.error('Error fetching restaurants:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const filteredRestaurants = selectedCuisine === 'all'
-    ? FEATURED_RESTAURANTS
-    : FEATURED_RESTAURANTS.filter((r) => r.cuisine_type === selectedCuisine);
+    ? restaurants
+    : restaurants.filter((r) => r.cuisine_type === selectedCuisine);
 
   return (
     <Layout>
